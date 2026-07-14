@@ -46,3 +46,23 @@ export const createUser = async (user: CreateUser) => {
 
   return result.insertId;
 };
+
+export const updateProfile = async (id: number,name: string) => {
+  const [result]: any = await db.query(
+    `UPDATE users SET name = ? WHERE id = ?`,[name, id]
+  );
+
+  return result.affectedRows;
+};
+
+export const updatePassword = async (id: number,password: string) => {
+  const [result]: any = await db.query(
+    `UPDATE users SET password = ? WHERE id = ?`,[password, id]);
+    return result.affectedRows;
+};
+
+export const findUserPasswordById = async (id: number) => {
+  const [rows]: any = await db.query(
+    `SELECT id, password FROM users WHERE id = ? LIMIT 1`,[id]);
+  return rows[0] || null;
+};

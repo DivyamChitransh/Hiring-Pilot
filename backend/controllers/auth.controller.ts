@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import { Request, Response } from "express";
 
-import { createUser, findUserByEmail,findUserById,findProfileById } from "../models/user";
+import { createUser, findUserByEmail,findUserById,findProfileById,updateProfile,updatePassword,findUserPasswordById } from "../models/user";
 import { generateToken } from "../utils/jwt";
 import { AuthRequest } from "../middlewares/auth.middleware";
 
@@ -73,3 +73,65 @@ export const getProfile = async (req: AuthRequest, res: Response) => {
     return res.status(500).json({success: false,message: "Internal Server Error"});
   } 
 }
+
+export const updateUserProfile = async (req: AuthRequest,res: Response) => {
+  try {
+    const { name } = req.body;
+    
+    if (!name) {
+      return res.status(400).json({success: false,message: "Name is required"});
+    }
+
+    const affectedRows = await updateProfile(req.user!.id,name.trim());
+
+    if (!affectedRows) {
+      return res.status(404).json({success: false,message: "User not found"});
+    }
+
+    const updatedProfile = await findProfileById(req.user!.id);
+
+    return res.status(200).json({success: true,message: "Profile updated successfully",data: updatedProfile
+    });
+  } catch (error) {
+
+    return res.status(500).json({success: false,message: "Internal Server Error"});
+  }
+};
+
+export const changePassword = async (req: AuthRequest,res: Response) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({success: false,message: "Current password and new password are required"});
+    }
+
+    const user = await findUserPasswordById(req.user!.id);
+
+    if (!user) {
+      return res.status(404).json({success: false,message: "User not found"});
+    }
+
+    const isMatched = await bcrypt.compare(currentPassword,user.password);
+
+    if (!isMatched) {
+      return res.status(401).json({success: false,message: "Current password is incorrect"});
+    }
+
+    const isSamePassword = await bcrypt.compare(newPassword,user.password);
+
+    if (isSamePassword) {
+      return res.status(400).json({success: false,message: "New password cannot be same as current password"});
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await updatePassword(req.user!.id,hashedPassword);
+
+    return res.status(200).json({success: true,message: "Password changed successfully",});
+
+  } catch (error) {
+    return res.status(500).json({success: false,message: "Internal Server Error",
+    });
+  }
+};
