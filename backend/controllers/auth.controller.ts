@@ -1,8 +1,9 @@
 import bcrypt from "bcrypt";
 import { Request, Response } from "express";
 
-import { createUser, findUserByEmail } from "../models/user";
+import { createUser, findUserByEmail,findUserById,findProfileById } from "../models/user";
 import { generateToken } from "../utils/jwt";
+import { AuthRequest } from "../middlewares/auth.middleware";
 
 export const signup = async (req: Request, res: Response) => {
   try {
@@ -56,3 +57,19 @@ export const login = async (req: Request, res: Response) => {
     return res.status(500).json({success: false,message: "Internal Server Error"});
   }
 };
+
+export const getProfile = async (req: AuthRequest, res: Response) => {
+  try {
+
+    const user = await findProfileById(req.user!.id);
+    if (!user) {
+      return res.status(404).json({success: false,message: "User not found"});
+    }
+
+    return res.status(200).json({success: true,data: user});
+  }
+
+    catch (error) {
+    return res.status(500).json({success: false,message: "Internal Server Error"});
+  } 
+}

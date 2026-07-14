@@ -22,7 +22,17 @@ export const findUserById = async (id: number) => {
     [id]
   );
 
-  return rows[0] || null;
+  return rows.length ? rows[0] : null;
+};
+
+
+export const findProfileById = async (id: number) => {
+  const [rows]: any = await db.query(
+    `SELECT id,name,email,role,is_verified,created_at,updated_at
+    FROM users WHERE id = ? LIMIT 1
+    `,[id]
+  );
+  return rows.length ? rows[0] : null;
 };
 
 export const createUser = async (user: CreateUser) => {
