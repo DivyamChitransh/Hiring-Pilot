@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import db from "./config/db";
+import { initializeDatabase } from "./database/init";
 
 dotenv.config();
 const app = express();
@@ -17,11 +18,13 @@ const startServer = async () => {
     console.log("Database Connected Successfully");
     connection.release();
 
+    await initializeDatabase();
+
     app.listen(PORT, () => {
       console.log(`Server running on ${PORT}`);
     });
   } catch (error) {
-    
+
     console.error("Database Connection Failed");
     console.error(error);
   }
