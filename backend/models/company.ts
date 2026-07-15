@@ -45,13 +45,16 @@ export const findCompanyById = async (id: number) => {
 
 export const getCompaniesByUser = async (created_by: number,limit: number,offset: number) => {
   const [rows]: any = await db.query(
-    `SELECT *
-     FROM companies
-     WHERE created_by = ?
-     ORDER BY created_at DESC LIMIT ? OFFSET ?`,
+    `SELECT * FROM companies WHERE created_by = ? ORDER BY created_at DESC LIMIT ? OFFSET ?`,
     [created_by, limit, offset]
   );
-  return rows;
+
+  const [count]: any = await db.query(
+    `SELECT COUNT(*) AS total FROM companies WHERE created_by = ?`,
+    [created_by]
+  );
+
+  return {data: rows,total: count[0].total};
 };
 
 export const getCompanies = async (limit: number,offset: number) => {
