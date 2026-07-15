@@ -14,8 +14,6 @@ export const login = (data: LoginPayload) => {return api.post("/auth/login", dat
 
 export const updateProfile = (data: UpdateProfilePayload) => {return api.put("/auth/profile", data)};
 
-export const changePassword = (data: ChangePasswordPayload) => {return api.put("/auth/change-password", data)};
-
 export interface Profile {
   id: number;
   name: string;
@@ -29,3 +27,7 @@ export interface Profile {
 export interface ProfileResponse {success: boolean;data: Profile;}
 
 export const getProfile = () => {return api.get<ProfileResponse>("/auth/profile")};
+
+export interface ChangePasswordPayload {currentPassword: string;newPassword: string}
+
+export const changePassword = (data: ChangePasswordPayload) => api.put("/auth/change-password", data);
