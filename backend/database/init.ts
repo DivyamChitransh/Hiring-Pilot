@@ -21,13 +21,18 @@ const createCompaniesTable = async () => {
       id INT PRIMARY KEY AUTO_INCREMENT,
       name VARCHAR(255) NOT NULL,
       description TEXT,
-      website VARCHAR(255),
+      website VARCHAR(255) NOT NULL,
+      email VARCHAR(255) NOT NULL,
+      phone VARCHAR(20),
+      industry VARCHAR(100),
+      location VARCHAR(255),
+      logo VARCHAR(255),
       created_by INT NOT NULL,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
       CONSTRAINT fk_company_creator
-      FOREIGN KEY(created_by)
+      FOREIGN KEY (created_by)
       REFERENCES users(id)
       ON DELETE CASCADE
     )

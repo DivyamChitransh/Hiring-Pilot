@@ -4,12 +4,14 @@ import cors from "cors";
 import db from "./config/db";
 import { initializeDatabase } from "./database/init";
 import authRoutes from "./routes/auth.routes";
+import companyRoutes from "./routes/company.routes";
 
 dotenv.config();
 const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.use("/api/company", companyRoutes);
 app.use("/api/auth", authRoutes);
 
 const PORT = process.env.PORT
