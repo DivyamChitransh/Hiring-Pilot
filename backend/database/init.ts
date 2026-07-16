@@ -47,23 +47,22 @@ const createJobsTable = async () => {
       title VARCHAR(255) NOT NULL,
       description TEXT NOT NULL,
       location VARCHAR(255),
-      employment_type ENUM('Full-time','Part-time','Internship','Contract') NOT NULL,
-      experience_level ENUM('Fresher','Junior','Mid','Senior') NOT NULL,
+      employment_type VARCHAR(20) NOT NULL,
+      Work_mode ENUM('Remote','On-site','Hybrid') NOT NULL,
+      experience VARCHAR(20) NOT NULL,
       salary_min INT,
       salary_max INT,
-      status ENUM('Draft','Open','Closed') DEFAULT 'Draft',
+      openings INT DEFAULT 1,
+      skills TEXT,
+      application_deadline DATE,
+      status ENUM('Open','Closed') DEFAULT 'Open',
       created_by INT NOT NULL,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
-      CONSTRAINT fk_job_company
-      FOREIGN KEY(company_id)
-      REFERENCES companies(id)
+      CONSTRAINT fk_job_company FOREIGN KEY(company_id) REFERENCES companies(id)
       ON DELETE CASCADE,
-
-      CONSTRAINT fk_job_creator
-      FOREIGN KEY(created_by)
-      REFERENCES users(id)
+      CONSTRAINT fk_job_creator FOREIGN KEY(created_by) REFERENCES users(id)
       ON DELETE CASCADE
     )
   `);

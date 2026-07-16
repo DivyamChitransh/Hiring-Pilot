@@ -6,6 +6,7 @@ import { initializeDatabase } from "./database/init";
 import authRoutes from "./routes/auth.routes";
 import companyRoutes from "./routes/company.routes";
 import uploadRoutes from "./routes/upload.routes";
+import jobsRoutes from "./routes/jobs.routes";
 
 dotenv.config();
 const app = express();
@@ -17,6 +18,7 @@ app.use("/uploads", express.static("uploads"));
 app.use("/api/company", companyRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/uploads", uploadRoutes);
+app.use("/api/jobs", jobsRoutes);
 
 
 const PORT = process.env.PORT
