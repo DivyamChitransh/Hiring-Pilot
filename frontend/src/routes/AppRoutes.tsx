@@ -6,6 +6,10 @@ import Dashboard from "@/pages/dashboard/Dashboard";
 import CreateCompany from "@/pages/company/Createcompany";
 import Companies from "@/pages/company/Companies";
 import EditCompany from "@/pages/company/Editcompany";
+import CreateJob from "@/pages/jobs/Createjob";
+import EditJob from "@/pages/jobs/Editjob";
+import Jobs from "@/pages/jobs/jobs";
+import JobDetails from "@/pages/jobs/Jobdetails";
 
 const AppRoutes = () => {
   return (
@@ -36,6 +40,22 @@ const AppRoutes = () => {
         <Route
           path="/companies/edit/:id"
           element={<EditCompany />}
+        />
+        <Route
+          path="/jobs/create"
+          element={<CreateJob/>}
+        />
+        <Route
+          path="/jobs"
+          element={<Jobs />}
+        />
+        <Route
+          path="/jobs/edit/:id"
+          element={<EditJob />}
+        />
+        <Route
+          path="/jobs/:id"
+          element={<JobDetails />}
         />
       </Routes>
 
