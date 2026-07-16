@@ -7,7 +7,8 @@ interface CreateJob {
   location?: string;
   employment_type: string;
   work_mode: "On-site" | "Remote" | "Hybrid";
-  experience: string;
+  experience_min: number;
+  experience_max: number;
   salary_min?: number;
   salary_max?: number;
   openings?: number;
@@ -22,7 +23,8 @@ interface UpdateJob {
   location?: string;
   employment_type: string;
   work_mode: "On-site" | "Remote" | "Hybrid";
-  experience: string;
+  experience_min: number;
+  experience_max: number;
   salary_min?: number;
   salary_max?: number;
   openings?: number;
@@ -87,8 +89,8 @@ export const findJobByTitleExcludingId = async (company_id: number,title: string
 
 export const createJob = async (job: CreateJob) => {
   const [result]: any = await db.query(
-    `INSERT INTO jobs (company_id,title,description,location,employment_type,work_mode,experience,salary_min,salary_max,openings,skills,application_deadline,created_by)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `INSERT INTO jobs (company_id,title,description,location,employment_type,work_mode,experience_min,experience_max,salary_min,salary_max,openings,skills,application_deadline,created_by)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `,
     [
       job.company_id,
@@ -97,7 +99,8 @@ export const createJob = async (job: CreateJob) => {
       job.location || null,
       job.employment_type,
       job.work_mode,
-      job.experience,
+      job.experience_min,
+      job.experience_max,
       job.salary_min || null,
       job.salary_max || null,
       job.openings || 1,
@@ -111,14 +114,15 @@ export const createJob = async (job: CreateJob) => {
 
 export const updateJob = async (id: number,job: UpdateJob) => {
   const [result]: any = await db.query(
-    `UPDATE jobs SET title = ?,description = ?,location = ?,employment_type = ?,work_mode = ?,experience = ?,salary_min = ?,salary_max = ?,openings = ?,skills = ?,application_deadline = ?,status = ?WHERE id = ?`,
+    `UPDATE jobs SET title = ?,description = ?,location = ?,employment_type = ?,work_mode = ?,experience_min = ?,experience_max = ?,salary_min = ?,salary_max = ?,openings = ?,skills = ?,application_deadline = ?,status = ?WHERE id = ?`,
     [
       job.title,
       job.description,
       job.location || null,
       job.employment_type,
       job.work_mode,
-      job.experience,
+      job.experience_min,
+      job.experience_max,
       job.salary_min || null,
       job.salary_max || null,
       job.openings || 1,

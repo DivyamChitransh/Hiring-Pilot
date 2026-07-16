@@ -18,7 +18,7 @@ app.use("/uploads", express.static("uploads"));
 app.use("/api/company", companyRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/uploads", uploadRoutes);
-app.use("/api/jobs", jobsRoutes);
+app.use("/api/job", jobsRoutes);
 
 
 const PORT = process.env.PORT

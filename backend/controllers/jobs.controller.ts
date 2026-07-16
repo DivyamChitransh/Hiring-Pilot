@@ -6,8 +6,8 @@ import {createJob,findJobByTitle,getJobs,getJobsByUser,getOpenJobs,findJobById,f
 export const create = async (req: AuthRequest,res: Response) => {
   try {
 
-    let {company_id,title,description,location,employment_type,work_mode,experience,salary_min,salary_max,openings,skills,application_deadline} = req.body;
-    if (!company_id || !title || !description || !employment_type || !work_mode || !experience) {
+    let {company_id,title,description,location,employment_type,work_mode,experience_min,experience_max,salary_min,salary_max,openings,skills,application_deadline} = req.body;
+    if (!company_id || !title || !description || !employment_type || !work_mode || !experience_min || !experience_max) {
       return res.status(400).json({success: false,message: "Required fields are missing"});
     }
 
@@ -26,8 +26,11 @@ export const create = async (req: AuthRequest,res: Response) => {
     if (existingJob) {
       return res.status(409).json({success: false,message: "Job already exists"});
     }
+    if (experience_min > experience_max) {
+        return res.status(400).json({success: false,message: "Maximum experience must be greater than or equal to minimum experience"})
+    }
 
-    const jobId = await createJob({company_id,title,description,location,employment_type,work_mode,experience,salary_min,salary_max,openings,skills,application_deadline,created_by: req.user!.id});
+    const jobId = await createJob({company_id,title,description,location,employment_type,work_mode,experience_min,experience_max,salary_min,salary_max,openings,skills,application_deadline,created_by: req.user!.id});
     return res.status(201).json({success: true,message: "Job created successfully",jobId});
   } catch (error) {
     return res.status(500).json({
@@ -106,7 +109,7 @@ export const update = async (req: AuthRequest,res: Response) => {
   try {
     const { id } = req.params;
     const { id: userId, role } = req.user!;
-    let {title,description,location,employment_type,work_mode,experience,salary_min,salary_max,openings,skills,application_deadline,status} = req.body;
+    let {title,description,location,employment_type,work_mode,experience_min,experience_max,salary_min,salary_max,openings,skills,application_deadline,status} = req.body;
     const job = await findJobById(Number(id));
 
     if (!job) {
@@ -123,8 +126,11 @@ export const update = async (req: AuthRequest,res: Response) => {
     if (existingJob) {
       return res.status(409).json({success: false,message: "Job already exists"});
     }
+    if (experience_min > experience_max) {
+        return res.status(400).json({success: false,message: "Maximum experience must be greater than or equal to minimum experience"})
+    }
 
-    await updateJob(Number(id), {title,description,location,employment_type,work_mode,experience,salary_min,salary_max,openings,skills,application_deadline,status,});
+    await updateJob(Number(id), {title,description,location,employment_type,work_mode,experience_min,experience_max,salary_min,salary_max,openings,skills,application_deadline,status,});
 
     const updatedJob = await findJobById(Number(id));
     return res.status(200).json({success: true,message: "Job updated successfully",data: updatedJob});
