@@ -69,37 +69,83 @@ const createJobsTable = async () => {
   `);
 };
 
+const createCandidatesTable = async () => {
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS candidates (
+      id INT PRIMARY KEY AUTO_INCREMENT,
+      user_id INT NOT NULL UNIQUE,
+      headline VARCHAR(255),
+      bio TEXT,
+      profile_image VARCHAR(255),
+      resume VARCHAR(255),
+      skills TEXT,
+      degree VARCHAR(255),
+      education TEXT,
+      education_timeline VARCHAR(50),
+      work_history JSON,
+      experience INT DEFAULT 0,
+      current_company VARCHAR(255),
+      current_ctc DECIMAL(12,2),
+      expected_ctc DECIMAL(12,2),
+      notice_period INT,
+      current_location VARCHAR(255),
+      preferred_location VARCHAR(255),
+      portfolio_url VARCHAR(255),
+      linkedin_url VARCHAR(255),
+      github_url VARCHAR(255),
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      ON UPDATE CURRENT_TIMESTAMP,
+
+      CONSTRAINT fk_candidate_user
+      FOREIGN KEY(user_id)
+      REFERENCES users(id)
+      ON DELETE CASCADE
+    )
+  `);
+};
+
 const createApplicationsTable = async () => {
   await db.query(`
     CREATE TABLE IF NOT EXISTS applications (
       id INT PRIMARY KEY AUTO_INCREMENT,
       job_id INT NOT NULL,
       candidate_id INT NOT NULL,
-      resume_url VARCHAR(500),
-      status ENUM(
-        'Applied',
-        'Screening',
-        'Interview',
-        'Rejected',
-        'Hired'
-      ) DEFAULT 'Applied',
+      resume VARCHAR(255) NOT NULL,
+      cover_letter TEXT NULL,
+      expected_salary DECIMAL(12,2) NULL,
+      notice_period INT NULL,
+      status ENUM('Applied','Screening','Interview','Rejected','Hired') DEFAULT 'Applied',
       applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      ON UPDATE CURRENT_TIMESTAMP,
       UNIQUE(job_id, candidate_id),
-
       CONSTRAINT fk_application_job
-      FOREIGN KEY(job_id)
+      FOREIGN KEY (job_id)
       REFERENCES jobs(id)
       ON DELETE CASCADE,
-
       CONSTRAINT fk_application_candidate
-      FOREIGN KEY(candidate_id)
+      FOREIGN KEY (candidate_id)
       REFERENCES users(id)
       ON DELETE CASCADE
     )
   `);
+};
 
+const migrateCandidatesTable = async () => {
+  const migrations = [
+    "ADD COLUMN degree VARCHAR(255) NULL AFTER skills",
+    "ADD COLUMN education_timeline VARCHAR(50) NULL AFTER education",
+    "ADD COLUMN work_history JSON NULL AFTER education_timeline",
+  ];
+
+  for (const migration of migrations) {
+    try {
+      await db.query(`ALTER TABLE candidates ${migration}`);
+    } catch (error: any) {
+      if (error?.code !== "ER_DUP_FIELDNAME") throw error;
+    }
+  }
 };
 
 export const initializeDatabase = async () => {
@@ -107,5 +153,7 @@ export const initializeDatabase = async () => {
   await createUsersTable();
   await createCompaniesTable();
   await createJobsTable();
+  await createCandidatesTable();
+  await migrateCandidatesTable();
   await createApplicationsTable();
 };
