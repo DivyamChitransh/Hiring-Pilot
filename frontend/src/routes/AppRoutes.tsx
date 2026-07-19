@@ -10,6 +10,9 @@ import CreateJob from "@/pages/jobs/Createjob";
 import EditJob from "@/pages/jobs/Editjob";
 import Jobs from "@/pages/jobs/jobs";
 import JobDetails from "@/pages/jobs/Jobdetails";
+import CreateCandidate from "@/pages/candidate/Createcandidate"
+import EditCandidate from "@/pages/candidate/Editcandidate"
+import CandidateProfile from "@/pages/candidate/Getcandidate"
 
 const AppRoutes = () => {
   return (
@@ -56,6 +59,18 @@ const AppRoutes = () => {
         <Route
           path="/jobs/:id"
           element={<JobDetails />}
+        />
+        <Route 
+          path="/candidate" 
+          element={<CandidateProfile />} 
+        />
+        <Route
+          path="/candidate/create"
+          element={<CreateCandidate />}
+        />
+        <Route
+          path="/candidate/edit"
+          element={<EditCandidate />}
         />
       </Routes>
 
