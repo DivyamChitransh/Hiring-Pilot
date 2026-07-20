@@ -5,18 +5,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import toast from "react-hot-toast";
-
 import { login } from "@/api/auth";
-import { setToken } from "@/utils/auth";
-
+import { setAuth  } from "@/utils/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
-import {
-  loginSchema,
-  LoginFormData,
-} from "@/validations/auth.validation";
+import {loginSchema,LoginFormData} from "@/validations/auth.validation";
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -36,39 +30,39 @@ const LoginForm = () => {
   });
 
   const onSubmit = async (formData: LoginFormData) => {
-    try {
-      const { data } = await login(formData);
-
-      setToken(data.token);
-
-      toast.success(data.message);
-
-      navigate("/dashboard", {
-        replace: true,
-      });
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        toast.error(
-          error.response?.data?.message ?? "Login failed"
-        );
-      } else {
-        toast.error("Something went wrong");
-      }
+  try {
+    const { data } = await login(formData);
+    setAuth(data.token, data.user);
+    toast.success(data.message);
+    switch (data.user.role) {
+      case "candidate":
+        navigate("/candidate/dashboard", {replace: true});
+        break;
+      case "recruiter":
+        navigate("/recruiter/dashboard", {replace: true});
+        break;
+      case "admin":
+        navigate("/admin/dashboard", {replace: true});
+        break;
+      default:
+        navigate("/", {replace: true});
     }
-  };
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      toast.error(error.response?.data?.message ?? "Login failed");
+    } else {
+      toast.error("Something went wrong");
+    }
+  }
+};
 
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
       className="space-y-5"
     >
-      {/* Email */}
-
       <div className="space-y-2">
-        <Label htmlFor="email">
-          Email
-        </Label>
-
+        <Label htmlFor="email">Email</Label>
         <div className="relative">
           <Mail
             size={18}

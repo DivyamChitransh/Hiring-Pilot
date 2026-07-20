@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
+import { getUser } from "@/utils/auth";
 import {
   Briefcase,
   Building2,
@@ -17,6 +18,7 @@ import type { Job } from "@/types/jobs";
 
 const JobDetails = () => {
   const { id } = useParams();
+  const user = getUser();
 
   const [job, setJob] = useState<Job | null>(null);
   const [loading, setLoading] = useState(true);
@@ -191,23 +193,15 @@ const JobDetails = () => {
           </p>
 
         </div>
-
         <div className="mt-8 flex gap-3">
-
-          <Link to={`/jobs/edit/${job.id}`}>
-            <Button>
-              Edit Job
-            </Button>
+          {user?.role === "candidate" ? (<Button>Apply Now</Button>) : (<>
+           <Link to={`/jobs/edit/${job.id}`}>
+            <Button>Edit Job</Button>
           </Link>
-
-          <Button variant="outline">
-            View Applications
-          </Button>
-
+            <Button variant="outline">View Applications</Button>
+          </>)}
         </div>
-
       </div>
-
     </div>
   );
 };

@@ -5,8 +5,10 @@ import {Briefcase,MapPin,Building2,IndianRupee,} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {getJobs,deleteJob} from "@/api/jobs";
 import type { Job } from "@/types/jobs";
+import { getUser } from "@/utils/auth";
 
 const Jobs = () => {
+  const user = getUser();
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -59,9 +61,11 @@ const Jobs = () => {
           </p>
         </div>
 
-        <Link to="/jobs/create">
-          <Button>Create Job</Button>
-        </Link>
+        {user?.role !== "candidate" && (
+          <Link to="/jobs/create">
+            <Button>Create Job</Button>
+          </Link>
+        )}
       </div>
 
       <div className="space-y-4">
@@ -133,25 +137,14 @@ const Jobs = () => {
                 </span>
 
                 <div className="mt-5 flex gap-3">
-                 <Link to={`/jobs/${job.id}`}>
-                 <Button variant="outline">View</Button></Link>
-
-                  <Link
-                    to={`/jobs/edit/${job.id}`}
-                  >
-                    <Button variant="outline">
-                      Edit
-                    </Button>
+                  <Link to={`/jobs/${job.id}`}>
+                    <Button variant="outline">View</Button>
                   </Link>
-
-                  <Button
-                    variant="destructive"
-                    onClick={() =>
-                      handleDelete(job.id)
-                    }
-                  >
-                    Delete
-                  </Button>
+                  {user?.role === "candidate" ? ( <Button>Apply</Button>) : (<>
+                  <Link to={`/jobs/edit/${job.id}`}>
+                    <Button variant="outline">Edit</Button>
+                  </Link>
+                    <Button variant="destructive" onClick={() => handleDelete(job.id)}>Delete</Button></>)}
                 </div>
               </div>
             </div>
